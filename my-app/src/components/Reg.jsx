@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styles from '../Registrations.module.css';
 
 
@@ -75,15 +75,25 @@ const validate = (data, config) => {
 export const Reg = () => {
     const [dataForm, setDataForm] = useState({email: '', password: '', confirmPassword: ''});
     const [errors, setErrors] = useState({});
-    
+    const [touched, setTouched] = useState({email: false, password: false, confirmPassword: false});
+    const submitButtonRef = useRef(null);
+
+    const isValid = Object.keys(errors).length === 0
+
+
     const handleChange = (e) => {
         const {name, value} = e.target;
         setDataForm((prevState) => ({...prevState, [name]:value}));
+        if (!touched[name]) {
+            setTouched((prevState) => ({...prevState, [name]:true}))
+        }
     }
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(dataForm);
+        if (!isValid) {
+            e.preventDefault();
+            console.log(dataForm);
+        }
     }
 
     useEffect(() => {
@@ -94,24 +104,17 @@ export const Reg = () => {
         setErrors(errors)
     }, [dataForm])
 
+    useEffect(() => {
+        if (isValid) {
+            submitButtonRef.current.focus()
+        }
+    }, [isValid])
+
+
     const showError = (name) => {
         return errors[name]
     }
 
-    const checkForError = (errors) => {
-        // console.log('errors!!!!!',errors);
-        
-        for (let key in errors) {
-            console.log(key);
-            
-            if (errors.hasOwnProperty(key)) {
-                if (errors[key] === null || errors[key] === undefined || errors[key] === '') {
-                    return true; // Если хотя бы одно значение пустое, возвращаем true
-                }
-            }
-        }
-        return false; // Если все значения заполнены, возвращаем false
-    }
 
     return (
         <div className={styles.App}>
@@ -124,14 +127,14 @@ export const Reg = () => {
                             <b>Почта: </b>
                         </label>
                         <input type="email" name="email" placeholder="Введите почту" value={dataForm.email} onChange={handleChange}/>
-                        {showError('email') && <span className={styles.Error}>{errors.email}</span>}
+                        {showError('email') && touched.email && <span className={styles.Error}>{errors.email}</span>}
                     </div>
                     <div>
                         <label htmlFor="password" className={styles.Label}>
                             <b>Пароль: </b>
                         </label>
                         <input type="password" name="password" placeholder="Введите пароль" value={dataForm.password} onChange={handleChange}/>
-                        {showError('password') && <span className={styles.Error}>{errors.password}</span>}
+                        {showError('password') && touched.password && <span className={styles.Error}>{errors.password}</span>}
                     </div>
 
                     <div>
@@ -139,10 +142,10 @@ export const Reg = () => {
                             <b>Повторите пароль: </b>
                         </label>
                         <input type="password" name="confirmPassword" placeholder="Введите пароль еще раз" value={dataForm.confirmPassword} onChange={handleChange}/>
-                        {showError('confirmPassword') && <span className={styles.Error}>{errors.confirmPassword}</span>}
+                        {showError('confirmPassword') && touched.confirmPassword && <span className={styles.Error}>{errors.confirmPassword}</span>}
                     </div>
 
-                    <button type="submit" disabled={checkForError(errors)}>Зарегистрироваться</button>
+                    <button type="submit" disabled={!isValid} ref={submitButtonRef}>Зарегистрироваться</button>
                 </form>
                 {/* <pre>
                     email: {email}
