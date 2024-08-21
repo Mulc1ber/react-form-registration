@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styles from './Registration.module.css';
+import styles from './Registrations.module.css';
 // import { useRef } from 'react';
 
 const INIT_FORM = {
@@ -26,6 +26,7 @@ const sendData = (formData) => {
 
 export const Registration = () => {
     const [errorForm, setErrorForm] = useState(null);
+    const [errorState, setErrorState] = useState(false);
     const { getState, updateState, resetState } = useStore();
 
     const { email, password, confirmPassword } = getState();
@@ -37,22 +38,29 @@ export const Registration = () => {
         if (name === 'password') {
             // (!/^[a-zA-Z0-9_]{6,20}$/.test(target.value))
             if (!/^[a-zA-Z0-9_]*$/.test(target.value)) {
-                setErrorForm(
-                    'Неверный пароль. Пароль должен содержать - латинские буквы, цифр и нижнее подчеркивание.',
-                );
+                setErrorForm('Неверный пароль. Пароль должен содержать - латинские буквы, цифр и нижнее подчеркивание.');
+                setErrorState(true)
             } else if (target.value.length > 20) {
                 setErrorForm('Неверный пароль. Пароль должен быть не больше 20 символов.');
-            } else {
+                setErrorState(true)
+            } 
+            else {
                 setErrorForm(null);
             }
         }
 
         if (name === 'confirmPassword') {
-            if (password.length < 6) {
+            if (!/^[a-zA-Z0-9_]*$/.test(target.value)) {
+                setErrorForm('Неверный пароль. Пароль должен содержать - латинские буквы, цифр и нижнее подчеркивание.');
+                setErrorState(true)
+            } else if (password.length < 6) {
                 setErrorForm('Неверный пароль. Пароль должен быть не меньше 6 символов.');
+                setErrorState(true)
             } else if (target.value !== password) {
                 setErrorForm('Введенный повторно пароль не совпадает. Попробуйте ещё раз.');
-            } else {
+                setErrorState(true)
+            } 
+            else {
                 setErrorForm(null);
             }
         }
@@ -61,6 +69,7 @@ export const Registration = () => {
     const onPasswordBlur = ({ target }) => {
         if (target.value.length < 6) {
             setErrorForm('Неверный пароль. Пароль должен быть не меньше 6 символов.');
+            setErrorState(true)
         }
         // else {
         //     setErrorForm(null);
@@ -70,8 +79,10 @@ export const Registration = () => {
     const onConfirmPassworddBlur = ({ target }) => {
         if (password.length < 6) {
             setErrorForm('Неверный пароль. Пароль должен быть не меньше 6 символов.');
+            setErrorState(true)
         } else if (target.value !== password) {
             setErrorForm('Введенный повторно пароль не совпадает. Попробуйте ещё раз.');
+            setErrorState(true)
         }
         // else {
         //     setErrorForm(null);
@@ -88,9 +99,11 @@ export const Registration = () => {
                 resetState();
             } else {
                 setErrorForm('Введенный повторно пароль не совпадает. Попробуйте ещё раз');
+                setErrorState(true)
             }
         } else {
             setErrorForm('Форма содержит ошибки. Пожалуйста, исправьте их.');
+            setErrorState(true)
         }
 
         // if (email && password && confirmPassword) {
@@ -103,13 +116,15 @@ export const Registration = () => {
     };
 
     return (
-        <div className={styles.app}>
+        <div className={styles.App}>
             <div>
-                <h1 style={{ textAlign: 'center' }}>Регистрация</h1>
-                <h2>Ошибки: Выводя запрещенные симаолы, регистрация проходит. Исправить.</h2>
-                <form className={styles.form} onSubmit={onSubmit}>
+                <p className={styles.Title}>Регистрация на React</p>
+
+                {/* <h2>Ошибки: Выводя запрещенные симаолы, регистрация проходит. Исправить.</h2> */}
+
+                <form className={styles.Form} onSubmit={onSubmit}>
                     <div>
-                        <label htmlFor="email">
+                        <label htmlFor="email" className={styles.Label}>
                             <b>Почта: </b>
                         </label>
                         <input
@@ -122,7 +137,7 @@ export const Registration = () => {
                         />
                     </div>
                     <div>
-                        <label htmlFor="password">
+                        <label htmlFor="password" className={styles.Label}>
                             <b>Пароль: </b>
                         </label>
                         <input
@@ -137,7 +152,7 @@ export const Registration = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="confirmPassword">
+                        <label htmlFor="confirmPassword" className={styles.Label}>
                             <b>Повторите пароль: </b>
                         </label>
                         <input
@@ -151,11 +166,11 @@ export const Registration = () => {
                         />
                     </div>
 
-                    <button type="submit" disabled={errorForm !== null}>
+                    <button type="submit" disabled={errorState}>
                         Зарегистрироваться
                     </button>
-                    {errorForm && (
-                        <span style={{ color: 'red', width: '300px', fontSize: '13px' }}>
+                    {errorState && (
+                        <span className={styles.Error}>
                             {errorForm}
                         </span>
                     )}
