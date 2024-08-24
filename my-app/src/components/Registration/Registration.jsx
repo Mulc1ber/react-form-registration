@@ -68,7 +68,7 @@ export const Registration = () => {
                         title={'Эл. Почта'}
                         type={'email'}
                         placeholder={'Введите почту'}
-                        value={dataForm}
+                        value={dataForm.email}
                         onChange={handleChange}
                         onBlur={handleBlur}
                         showError={showError}
@@ -79,7 +79,7 @@ export const Registration = () => {
                         title={'Пароль'}
                         type={'password'}
                         placeholder={'Введите пароль'}
-                        value={dataForm}
+                        value={dataForm.password}
                         onChange={handleChange}
                         onBlur={handleBlur}
                         showError={showError}
@@ -90,7 +90,7 @@ export const Registration = () => {
                         title={'Повторите пароль'}
                         type={'password'}
                         placeholder={'Введите пароль еще раз'}
-                        value={dataForm}
+                        value={dataForm.confirmPassword}
                         onChange={handleChange}
                         onBlur={handleBlur}
                         showError={showError}
