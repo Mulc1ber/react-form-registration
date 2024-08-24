@@ -1,0 +1,6 @@
+.Label {
+    display: inline-block;
+    min-width: 150px;
+    text-align: end;
+    margin-right: 5px;
+}
